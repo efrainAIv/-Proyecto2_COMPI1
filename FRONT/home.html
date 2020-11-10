@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.1/codemirror.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.1/codemirror.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.1/mode/meta.min.js"></script>
+    <link rel="stylesheet" href="https://codemirror.net/theme/yonce.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.1/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.1/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.1/mode/javascript/javascript.min.js"></script>
+
+</head>
+
+<body>
+    <div class="container-fluid card-body ">
+        <div class="row ">
+
+            <div class="col xl-1 card " style="height: 910px;">
+                <div class="container-fluid ">
+
+                    <br>
+                    <div class="card card-header">
+                        <div class="btn-group">
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                                    Menú
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#">
+                                        <input type="file" id="myfile" name="myfile"><br><br>
+                                    </a>
+                                    <a class="dropdown-item" href="#">Guardar</a>
+                                    <a class="dropdown-item" href="#">Guardar como...</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="/home?newTab=1">Nueva pestaña</a>
+                                </div>
+                            </div>
+                            <div class="dropdown" style="width: 60px;">
+                                <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">
+                                    Descargar
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#">Traduccion Python</a>
+                                    <a class="dropdown-item" href="#">Traduccion JavaScript</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="/grafo/">Generar grafo</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="/grafo/">Generar reportes</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card card-body">
+                            <button type="button" class="btn btn-primary" data-toggle="collapse"
+                                data-target="#demo">Info.</button>
+                            <div id="demo" class="collapse card card-header">
+                                <h5>
+                                    Helmut Efraín Najarro Álvarez -201712350<br>
+                                    Organización de lenguajes y compiladores 1<br>
+                                    Proyecto 2
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="container-fluid " style="height: 800px;">
+
+                    <div class="container mt-3">
+                        <br>
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs">
+                            {{range .Tabs}}
+                            {{if .Numero}}
+                            <a class="nav-link {{.CabeceraActiva}} btn-dark" href="/home?getTab={{.Nombre}}">Tab
+                                {{.Numero}}</a>
+                            {{else}}
+                            <a class="nav-link {{.CabeceraActiva}} btn-dark" href="/home?getTab={{.Nombre}}">Home</a>
+                            {{end}}
+                            {{end}}
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            {{range .Tabs}}
+                            <div id="{{.Nombre}}" class="container tab-pane {{.CuerpoActivo}}" style="height: 600px;">
+                                <br>
+
+                                <form class="form-group" action="/sendPY/" method="POST">
+                                    <div style="height: 590px;">
+                                        <textarea name="texto" id="text{{.Nombre}}"></textarea>
+                                    </div>
+                                    <input type="radio" id="py" name="lenguaje" value="py" required> PYTHON
+                                    <input type="radio" id="js" name="lenguaje" value="js" required> JAVASCRIPT
+                                    <input class="btn btn-info" type="submit" value="ANALNIZAR">
+                                </form>
+
+                                <script>
+
+                                    if (localStorage.getItem("ls{{.Nombre}}") != null) {
+                                        document.getElementById("text{{.Nombre}}").value = localStorage.getItem("ls{{.Nombre}}");
+                                    }
+
+                                    var editor = CodeMirror.fromTextArea(document.getElementById("text{{.Nombre}}"), {
+                                        lineNumbers: true,
+                                        theme: "yonce",
+                                        mode: "text/x-java"
+                                    });
+                                    editor.setSize("100%", "100%");
+                                    editor.on('change', (editor) => {
+                                        const text = editor.doc.getValue()
+                                        console.log(text.split('\n'));
+
+                                        if (typeof (Storage) !== "undefined") {
+                                            // Store
+                                            localStorage.setItem("ls{{.Nombre}}", text);
+                                        }
+                                    });
+                                </script>
+                            </div>
+                            {{end}}
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="col xl-1 card" style="height: 910px;">
+                <div class="card-header" style="background-color:cornsilk;"> <strong>JAVASCRIPT</strong></div>
+                <div style="height:50%;">
+                    <textarea id="consolaJS"></textarea>
+                </div>
+
+                <div class="card-header" style="background-color:cornsilk;"><strong>PYTHON</strong></div>
+                <div style="height:50%;">
+                    <textarea id="consolaPy" disabled></textarea>
+                </div>
+            </div>
+            <script>
+
+                if (localStorage.getItem("tokensPY") != null) {
+                    document.getElementById("consolaPy").value = localStorage.getItem("tokensPY");
+                }
+
+                if (localStorage.getItem("tokensJS") != null) {
+                    document.getElementById("consolaJS").value = localStorage.getItem("tokensJS");
+                }
+
+                var editor1 = CodeMirror.fromTextArea(document.getElementById("consolaJS"), {
+                    lineNumbers: true,
+                    theme: "yonce",
+                    mode: "javascript"
+                });
+                var editor2 = CodeMirror.fromTextArea(document.getElementById("consolaPy"), {
+                    lineNumbers: true,
+                    theme: "yonce",
+                    mode: "python"
+                });
+                editor1.setSize("100%", "88%");
+                editor2.setSize("100%", "88%");
+            </script>
+
+            <script>
+                if (typeof (Storage) !== "undefined") {
+                    localStorage.removeItem("tokensPY");
+                }
+            </script>
+
+            {{with .Python}}
+            {{range .ListaErroresLex}}
+            <script>
+                if (typeof (Storage) !== "undefined") {
+                    // Store
+                    token = "ERROR LEXICO >> Lexema: {{.Lexema}}, Tipo:{{.Tipo}}, Fila:{{.Fila}}, Columna:{{.Columna}}\n";
+                    if (localStorage.getItem("tokensPY") != null) {
+                        localStorage.setItem("tokensPY", localStorage.getItem("tokensPY") + token);
+                    }
+                    else {
+                        localStorage.setItem("tokensPY", token);
+                    }
+
+
+                }
+            </script>
+            {{end}}
+            {{range .ListaErroresSintact}}
+            <script>
+                if (typeof (Storage) !== "undefined") {
+                    // Store
+                    token = "ERROR SINTACTICO >> Lexema: {{.Lexema}}, Tipo:{{.Tipo}}, Fila:{{.Fila}}, Columna:{{.Columna}}\n";
+                    if (localStorage.getItem("tokensPY") != null) {
+                        localStorage.setItem("tokensPY", localStorage.getItem("tokensPY") + token);
+                    }
+                    else {
+                        localStorage.setItem("tokensPY", token);
+                    }
+
+
+                }
+            </script>
+            {{end}}
+            {{end}}
+
+
+            {{with .JavaScript}}
+            {{range .ListaErroresLex}}
+            <script>
+                if (typeof (Storage) !== "undefined") {
+                    // Store
+                    token = "ERROR LEXICO >> Lexema: {{.Lexema}}, Tipo:{{.Tipo}}, Fila:{{.Fila}}, Columna:{{.Columna}}\n";
+                    if (localStorage.getItem("tokensJS") != null) {
+                        localStorage.setItem("tokensJS", localStorage.getItem("tokensJS") + token);
+                    }
+                    else {
+                        localStorage.setItem("tokensJS", token);
+                    }
+
+
+                }
+            </script>
+            {{end}}
+            {{range .ListaErroresSintact}}
+            <script>
+                if (typeof (Storage) !== "undefined") {
+                    // Store
+                    token = "ERROR SINTACTICO >> Lexema: {{.Lexema}}, Tipo:{{.Tipo}}, Fila:{{.Fila}}, Columna:{{.Columna}}\n";
+                    if (localStorage.getItem("tokensJS") != null) {
+                        localStorage.setItem("tokensJS", localStorage.getItem("tokensJS") + token);
+                    }
+                    else {
+                        localStorage.setItem("tokensJS", token);
+                    }
+
+
+                }
+            </script>
+            {{end}}
+            {{end}}
+            
+
+        </div>
+    </div>
+
+    <script>
+        function readFile(e) {
+
+            var file = e.target.files[0];
+
+            if (!file) {
+                return;
+            }
+            alert(file.webkitRelativePath);
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var contents = e.target.result;
+                displayContents(contents);
+            };
+            reader.readAsText(file);
+        }
+        document.getElementById('myfile').addEventListener('change', readFile, false);
+    </script>
+
+    {{with .Tabs}}
+    {{range .}}
+    {{if .Activa}}
+    <script>
+        function displayContents(contents) {
+            estado = "{{.CuerpoActivo}}";
+
+            if (estado == "active") {
+                localStorage.setItem("ls{{.Nombre}}", contents);
+                location.reload();
+            }
+        }
+    </script>
+    {{end}}
+    {{end}}
+    {{end}}
+
+</body>
+
+
+
+</html>
